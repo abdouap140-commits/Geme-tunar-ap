@@ -2,9 +2,12 @@
   "name": "game-tuner-app",
   "version": "1.0.0",
   "private": true,
-  "description"
-}
+  "description": "Game Tuner App",
   "devDependencies": {
     "@capacitor/cli": "^4.0.0"
+  },
+  "dependencies": {
+    "@capacitor/core": "^4.0.0",
+    "@capacitor/android": "^4.0.0"
   }
-
+}
