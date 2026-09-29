@@ -1,54 +1,71 @@
-name: Build Android APK
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ضبط الأداء للألعاب</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+body{background:#0f172a;color:#fff;padding:16px}
+.card{background:#1e293b;border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid #334155}
+.title{color:#38bdf8;font-size:20px;font-weight:900;text-align:center;margin:10px 0 20px}
+.badge{background:#0ea5e9;color:#fff;padding:4px 10px;border-radius:20px;font-size:12px}
+select,button{width:100%;padding:12px;border-radius:10px;border:none;margin-top:8px}
+select{background:#0f172a;color:#fff;border:1px solid #334155}
+.btn{background:#0ea5e9;color:#fff;font-weight:900}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.item{background:#0f172a;padding:10px;border-radius:10px;font-size:13px}
+.item b{color:#38bdf8;display:block}
+table{width:100%;margin-top:10px;border-collapse:collapse}
+td{padding:8px;border-bottom:1px solid #334155;font-size:13px}
+td:last-child{color:#38bdf8;font-weight:700}
+</style>
+</head>
+<body>
+<div class="title">🎮 ضبط الأداء للألعاب - الأزرق الأصلي</div>
 
-on:
-  push:
-    branches: [ main, master ]
+<div class="card">
+<div style="display:flex;justify-content:space-between"><span>جهازك</span><span class="badge" id="score">فحص...</span></div>
+<div class="grid">
+<div class="item"><b>المعالج</b><span id="cpu">...</span></div>
+<div class="item"><b>كرت الشاشة</b><span id="gpu">...</span></div>
+<div class="item"><b>الرام</b><span id="ram">...</span></div>
+<div class="item"><b>الشاشة</b><span id="hz">...</span></div>
+</div>
+</div>
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+<div class="card">
+<label>🎯 اختر اللعبة</label>
+<select id="game" onchange="calc()">
+<option>Free Fire</option><option>PUBG Mobile</option><option>COD Mobile</option><option>Valorant</option><option>CS2</option><option>Fortnite</option><option>GTA V</option><option>Cyberpunk 2077</option>
+</select>
+<label style="margin-top:10px;display:block">⚙️ الأولوية</label>
+<select id="prio" onchange="calc()"><option value="fps">أعلى FPS</option><option value="bal" selected>متوازن</option><option value="qual">أفضل جودة</option></select>
+</div>
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
+<div class="card" id="result">اختر لعبة ليظهر الجدول...</div>
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+<script>
+let cpuCores=navigator.hardwareConcurrency||4;
+document.getElementById('cpu').innerText=cpuCores+' أنوية';
+document.getElementById('ram').innerText=(navigator.deviceMemory||4)+' GB';
+document.getElementById('hz').innerText=window.screen.width+'x'+window.screen.height;
+let canvas=document.createElement('canvas'); let gl=canvas.getContext('webgl'); let dbg=gl.getExtension('WEBGL_debug_renderer_info');
+let gpu=dbg?gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL):'GPU عام';
+document.getElementById('gpu').innerText=gpu.substring(0,25);
+let score=Math.min(95, cpuCores*8 + (navigator.deviceMemory||4)*5 + 20);
+document.getElementById('score').innerText=score+'/100';
+if(score<40) document.getElementById('score').style.background='#ef4444';
 
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Create web assets if missing
-        run: |
-          if [ ! -d "www" ]; then
-            mkdir www
-            echo '<html><body><h1>Game Tuner App</h1></body></html>' > www/index.html
-          fi
-          if [ ! -f "capacitor.config.json" ]; then
-            echo '{"appId":"com.gametuner.app","appName":"Game Tuner","webDir":"www","bundledWebRuntime":false}' > capacitor.config.json
-          fi
-
-      - name: Add Android Platform
-        run: npx cap add android || true
-
-      - name: Sync Capacitor
-        run: npx cap sync
-
-      - name: Build APK with Gradle
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: game-tuner-app-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+function calc(){
+ let g=document.getElementById('game').value; let p=document.getElementById('prio').value;
+ let res='Low', gfx='Smooth', fps='60', shadow='Off';
+ if(p=='fps'){res='Low';gfx='Smooth';fps='90-120'} 
+ if(p=='bal'){res='Medium';gfx='Balanced';fps='60'}
+ if(p=='qual'){res='High';gfx='HD';fps='40'}
+ document.getElementById('result').innerHTML=`<b>✅ إعدادات ${g}</b><table><tr><td>الدقة</td><td>${res}</td></tr><tr><td>الجودة</td><td>${gfx}</td></tr><tr><td>الظلال</td><td>${shadow}</td></tr><tr><td>سقف FPS</td><td>${fps}</td></tr><tr><td>عنق الزجاجة</td><td>${cpuCores<8?'المعالج':'كرت الشاشة'}</td></tr></table><button class="btn" style="margin-top:12px" onclick="alert('تم تطبيق الإعدادات لـ ${g}')">تطبيق الإعدادات 🚀</button>`;
+}
+calc();
+</script>
+</body>
+</html>
