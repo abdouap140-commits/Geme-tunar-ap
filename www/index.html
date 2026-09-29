@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Tuner Pro</title>
+<style>
+body { background: #0f0f0f; color: white; font-family: sans-serif; padding: 20px; margin:0; }
+h1 { text-align: center; color: #00ff88; }
+.card { background: #1e1e1e; border-radius: 15px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #00ff88; }
+label { display:block; margin-bottom: 5px; font-weight: bold; }
+select, input[type=range] { width: 100%; padding: 10px; background: #2a2a2a; color: white; border: none; border-radius: 8px; margin-bottom:10px; }
+button { width:100%; background: #00ff88; color: black; border:none; padding:15px; border-radius:10px; font-weight:bold; font-size:18px; margin-top:10px; }
+.value { color: #00ff88; float:right; }
+</style>
+</head>
+<body>
+<h1>Game Tuner Pro</h1>
+
+<div class="card">
+<label>Game <span class="value">PUBG / Free Fire</span></label>
+<select id="game"><option>PUBG Mobile</option><option>Free Fire</option><option>Call of Duty</option><option>Mobile Legends</option></select>
+</div>
+
+<div class="card">
+<label>FPS <span class="value" id="fpsVal">60 FPS</span></label>
+<input type="range" id="fps" min="30" max="120" value="60" oninput="document.getElementById('fpsVal').innerText=this.value+' FPS'">
+</div>
+
+<div class="card">
+<label>Resolution <span class="value" id="resVal">HD</span></label>
+<select id="res" onchange="document.getElementById('resVal').innerText=this.value"><option>Low</option><option selected>HD</option><option>HDR</option><option>Ultra HD</option></select>
+</div>
+
+<div class="card">
+<label>Graphics Quality</label>
+<select><option>Smooth</option><option>Balanced</option><option selected>HD</option><option>Ultra</option></select>
+</div>
+
+<button onclick="alert('Applied! Restart your game now - تم تفعيل التحسين!')">APPLY BOOST +</button>
+<button style="background:#333;color:white;margin-top:10px;" onclick="alert('Cache cleared!')">Clear Cache</button>
+
+</body>
+</html>
