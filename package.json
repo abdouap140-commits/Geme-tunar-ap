@@ -2,7 +2,7 @@
   "name": "game-tuner-app",
   "version": "1.0.0",
   "private": true,
-  "description": "ضبط الأداء للألعاب"
+  "description"
 }
   "devDependencies": {
     "@capacitor/cli": "^4.0.0"
