@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "ضبط الأداء للألعاب"
-},
+}
   "devDependencies": {
     "@capacitor/cli": "^4.0.0"
   }
