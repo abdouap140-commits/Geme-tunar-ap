@@ -25,6 +25,16 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Create web assets if missing
+        run: |
+          if [ ! -d "www" ]; then
+            mkdir www
+            echo '<html><body><h1>Game Tuner App</h1></body></html>' > www/index.html
+          fi
+          if [ ! -f "capacitor.config.json" ]; then
+            echo '{"appId":"com.gametuner.app","appName":"Game Tuner","webDir":"www","bundledWebRuntime":false}' > capacitor.config.json
+          fi
+
       - name: Add Android Platform
         run: npx cap add android || true
 
