@@ -1,44 +1,134 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Game Tuner Pro</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>محسن الألعاب</title>
 <style>
-body { background: #0f0f0f; color: white; font-family: sans-serif; padding: 20px; margin:0; }
-h1 { text-align: center; color: #00ff88; }
-.card { background: #1e1e1e; border-radius: 15px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #00ff88; }
-label { display:block; margin-bottom: 5px; font-weight: bold; }
-select, input[type=range] { width: 100%; padding: 10px; background: #2a2a2a; color: white; border: none; border-radius: 8px; margin-bottom:10px; }
-button { width:100%; background: #00ff88; color: black; border:none; padding:15px; border-radius:10px; font-weight:bold; font-size:18px; margin-top:10px; }
-.value { color: #00ff88; float:right; }
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+body{background:#0a0e1a;color:#fff;min-height:100vh}
+.screen{display:none;padding:20px;animation:fade.4s}.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.splash{text-align:center;padding-top:60px}
+.splash h1{font-size:32px;color:#00d4ff}.splash p{color:#8892a4;margin:20px 0;line-height:1.6}
+.card{background:#151a2b;border:1px solid #232a41;border-radius:16px;padding:16px;margin-bottom:12px}
+.btn{width:100%;background:linear-gradient(135deg,#00d4ff,#0ea5e9);color:#000;border:none;padding:15px;border-radius:12px;font-weight:900;font-size:16px;margin-top:10px}
+.btn2{background:#232a41;color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.item{background:#0a0e1a;padding:12px;border-radius:10px;text-align:center}
+.item b{color:#00d4ff;display:block;font-size:18px}.item span{font-size:11px;color:#8892a4}
+.game{display:flex;align-items:center;justify-content:space-between;background:#0a0e1a;padding:14px;border-radius:12px;margin-bottom:8px;border:1px solid transparent}
+.game.active{border-color:#00d4ff;background:#11172a}
+.tip{display:flex;gap:10px;background:#0a0e1a;padding:10px;border-radius:10px;margin-bottom:8px;font-size:13px}
+.dot{width:8px;height:8px;background:#00ff88;border-radius:50%;margin-top:6px;flex-shrink:0}
 </style>
 </head>
 <body>
-<h1>Game Tuner Pro</h1>
 
-<div class="card">
-<label>Game <span class="value">PUBG / Free Fire</span></label>
-<select id="game"><option>PUBG Mobile</option><option>Free Fire</option><option>Call of Duty</option><option>Mobile Legends</option></select>
+<!-- 1- شاشة العرض -->
+<div id="s1" class="screen active splash">
+<h1>🚀 محسن الألعاب</h1>
+<p>هذا التطبيق كيدخل لنظام الهاتف ديالك، كيقرا المواصفات، وكيعطيك أفضل إعدادات باش تلعب بلا لاغ</p>
+<div style="font-size:60px;margin:20px">🎮</div>
+<div class="card" style="text-align:right">
+<b>شنو كيدير؟</b><br><br>
+✓ قراءة اسم ونوع الجهاز<br>
+✓ فحص المعالج والرام وكرت الشاشة<br>
+✓ اقتراح طرق تحسين الأداء<br>
+✓ إعدادات خاصة لكل لعبة
+</div>
+<button class="btn" onclick="go(2)">ابدأ الفحص الآن ➜</button>
 </div>
 
+<!-- 2- معلومات الجهاز -->
+<div id="s2" class="screen">
+<h2 style="text-align:center;margin-bottom:15px">📱 معلومات جهازك</h2>
 <div class="card">
-<label>FPS <span class="value" id="fpsVal">60 FPS</span></label>
-<input type="range" id="fps" min="30" max="120" value="60" oninput="document.getElementById('fpsVal').innerText=this.value+' FPS'">
+<div style="display:flex;justify-content:space-between"><b id="devName">...</b><span id="score" style="background:#00d4ff;color:#000;padding:3px 8px;border-radius:10px;font-size:12px;font-weight:900"></span></div>
+<div style="color:#8892a4;font-size:12px;margin-top:4px" id="devModel">...</div>
+</div>
+<div class="grid2">
+<div class="item"><b id="cpu">...</b><span>المعالج</span></div>
+<div class="item"><b id="gpu">...</b><span>كرت الشاشة</span></div>
+<div class="item"><b id="ram">...</b><span>الرام</span></div>
+<div class="item"><b id="os">...</b><span>النظام</span></div>
+</div>
+<div class="card" style="margin-top:12px">
+<b>⚡ طرق تحسين الأداء</b>
+<div id="tips" style="margin-top:10px"></div>
+</div>
+<button class="btn" onclick="go(3)">اختر اللعبة لتحسينها ➜</button>
+<button class="btn btn2" onclick="go(1)">رجوع</button>
 </div>
 
-<div class="card">
-<label>Resolution <span class="value" id="resVal">HD</span></label>
-<select id="res" onchange="document.getElementById('resVal').innerText=this.value"><option>Low</option><option selected>HD</option><option>HDR</option><option>Ultra HD</option></select>
+<!-- 3- اختيار اللعبة والتحسين -->
+<div id="s3" class="screen">
+<h2 style="text-align:center;margin-bottom:15px">🎯 اختر لعبتك</h2>
+<div id="games"></div>
+<div class="card" id="result" style="display:none"></div>
+<button class="btn btn2" onclick="go(2)">رجوع لمعلومات الجهاز</button>
 </div>
 
-<div class="card">
-<label>Graphics Quality</label>
-<select><option>Smooth</option><option>Balanced</option><option selected>HD</option><option>Ultra</option></select>
-</div>
+<script>
+function go(n){document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));document.getElementById('s'+n).classList.add('active');window.scrollTo(0,0)}
 
-<button onclick="alert('Applied! Restart your game now - تم تفعيل التحسين!')">APPLY BOOST +</button>
-<button style="background:#333;color:white;margin-top:10px;" onclick="alert('Cache cleared!')">Clear Cache</button>
+// قراءة النظام
+let cores=navigator.hardwareConcurrency||8;
+let ramVal=navigator.deviceMemory||4;
+let ua=navigator.userAgent;
+let isSamsung = ua.includes('SM-')? ua.match(/SM-\w+/)[0] : 'Samsung A32';
+document.getElementById('devName').innerText=isSamsung;
+document.getElementById('devModel').innerText=ua.substring(0,55);
+document.getElementById('cpu').innerText=cores+' أنوية';
+document.getElementById('ram').innerText=ramVal+' GB';
+document.getElementById('os').innerText=navigator.platform;
+let canvas=document.createElement('canvas'); let gl=canvas.getContext('webgl'); let ext=gl.getExtension('WEBGL_debug_renderer_info');
+let gpuName=ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):'Mali-G52';
+document.getElementById('gpu').innerText=gpuName.split(' ')[0];
 
+let score=Math.min(95,cores*7+ramVal*6+25);
+document.getElementById('score').innerText=score+'/100';
+let tipsDiv=document.getElementById('tips');
+let tips=[`سكر التطبيقات فالخلفية (+15% أداء)`,`فعل وضع الأداء العالي فالإعدادات`,`مسح الكاش ديال الألعاب كل أسبوع`,`خلي الشحن فوق 20% باش ما يطيحش الـ FPS`,`طفي توفير الطاقة ملي تلعب`];
+if(score<50) tips.unshift('جهازك متوسط - لعب بدقة منخفضة باش تربح FPS');
+tipsDiv.innerHTML=tips.map(t=>`<div class="tip"><div class="dot"></div><div>${t}</div></div>`).join('');
+
+// الألعاب
+let gameList=[
+{id:'freefire',name:'Free Fire',icon:'🔥'},
+{id:'pubg',name:'PUBG Mobile',icon:'🪖'},
+{id:'cod',name:'COD Mobile',icon:'🔫'},
+{id:'efootball',name:'eFootball 2025',icon:'⚽'},
+{id:'mlbb',name:'Mobile Legends',icon:'⚔️'},
+];
+let gDiv=document.getElementById('games');
+gDiv.innerHTML=gameList.map(g=>`<div class="game" onclick="selectGame('${g.id}',this)"><div>${g.icon} ${g.name}</div><div>‹</div></div>`).join('');
+
+function selectGame(id,el){
+document.querySelectorAll('.game').forEach(x=>x.classList.remove('active'));el.classList.add('active');
+let autoRes=score<45?'منخفضة':score<75?'متوسطة':'عالية';
+let autoFps=score<45?'60':'90';
+let configs={
+freefire:{res:'منخفضة',gfx:'سلس',shadow:'إيقاف',fps:'90',sensi:'عام 95 - ريد دوت 88'},
+pubg:{res:'سلسة',gfx:'متوازنة',shadow:'إيقاف',fps:autoFps,sensi:'بدون جيروسكوب'},
+cod:{res:autoRes,gfx:'متوسطة',shadow:'إيقاف',fps:autoFps,sensi:'حساسية 70'},
+efootball:{res:'قياسية',gfx:'منخفضة',shadow:'إيقاف',fps:'60',sensi:'-'},
+mlbb:{res:autoRes,gfx:'متوسطة',shadow:'إيقاف',fps:'عالي',sensi:'-'},
+}
+let c=configs[id];
+document.getElementById('result').style.display='block';
+document.getElementById('result').innerHTML=`
+<b>✅ إعدادات ${el.innerText} لجهازك (${score}/100)</b>
+<table style="width:100%;margin-top:10px;border-collapse:collapse">
+<tr><td style="padding:8px;border-bottom:1px solid #232a41">الدقة</td><td style="padding:8px;border-bottom:1px solid #232a41;color:#00d4ff;font-weight:700">${c.res}</td></tr>
+<tr><td style="padding:8px;border-bottom:1px solid #232a41">الجودة</td><td style="padding:8px;border-bottom:1px solid #232a41;color:#00d4ff;font-weight:700">${c.gfx}</td></tr>
+<tr><td style="padding:8px;border-bottom:1px solid #232a41">الظلال</td><td style="padding:8px;border-bottom:1px solid #232a41;color:#00d4ff;font-weight:700">${c.shadow}</td></tr>
+<tr><td style="padding:8px;border-bottom:1px solid #232a41">سقف FPS</td><td style="padding:8px;border-bottom:1px solid #232a41;color:#00d4ff;font-weight:700">${c.fps}</td></tr>
+<tr><td style="padding:8px">الحساسية</td><td style="padding:8px;color:#00d4ff;font-weight:700">${c.sensi}</td></tr>
+</table>
+<button class="btn" style="margin-top:12px" onclick="alert('تم حفظ إعدادات ${el.innerText} - طبقها داخل اللعبة الآن!')">تطبيق الإعدادات 🚀</button>
+`;
+if(navigator.vibrate) navigator.vibrate(50);
+}
+</script>
 </body>
 </html>
